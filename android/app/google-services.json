@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "262796969095",
+    "project_id": "carbon-chillax-10e26",
+    "storage_bucket": "carbon-chillax-10e26.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:262796969095:android:8ac2a2476c5daa04f26422",
+        "android_client_info": {
+          "package_name": "com.example.Carbon_Chillax"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "262796969095-7pvu7gevouju192udcde6qhcg50tab2j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBjmUImKJID7zgNMJs4DVnWL2L1LpmvNi4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "262796969095-7pvu7gevouju192udcde6qhcg50tab2j.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
