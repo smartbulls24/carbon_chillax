@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:video_player/video_player.dart';
-import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:Carbon_Chillax/screens/auth/auth_wrapper.dart';
+import 'package:Carbon_Chillax/screens/auth/login_screen.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -12,51 +9,28 @@ class OnboardingScreen extends StatefulWidget {
   _OnboardingScreenState createState() => _OnboardingScreenState();
 }
 
-class _OnboardingScreenState extends State<OnboardingScreen> with TickerProviderStateMixin {
+class _OnboardingScreenState extends State<OnboardingScreen> {
   final PageController _pageController = PageController();
-  late VideoPlayerController _videoController;
-  bool isLastPage = false;
+  int _currentPage = 0;
 
-  late AnimationController _textAnimationController;
-  late Animation<Offset> _textSlideAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-    _videoController = VideoPlayerController.asset('assets/video/landingPage_video.mp4')
-      ..initialize().then((_) {
-        _videoController.play();
-        _videoController.setLooping(true);
-        setState(() {});
-      });
-
-    _textAnimationController = AnimationController(
-      duration: const Duration(milliseconds: 600),
-      vsync: this,
-    );
-
-    _textSlideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.5),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _textAnimationController, curve: Curves.easeOut));
-
-    _textAnimationController.forward();
-  }
-
-  @override
-  void dispose() {
-    _pageController.dispose();
-    _videoController.dispose();
-    _textAnimationController.dispose();
-    super.dispose();
-  }
-
-  void _onPageChanged(int index) {
-    setState(() {
-      isLastPage = index == 2;
-    });
-    _textAnimationController.reset();
-    _textAnimationController.forward();
+  List<Widget> _buildPages() {
+    return [
+      _buildPage(
+        image: 'assets/images/onboarding1.png',
+        title: 'Track Your Carbon Footprint',
+        description: 'Monitor your daily activities and their impact on the environment.',
+      ),
+      _buildPage(
+        image: 'assets/images/onboarding2.png',
+        title: 'Get Eco-Friendly Tips',
+        description: 'Receive personalized suggestions to reduce your carbon emissions.',
+      ),
+      _buildPage(
+        image: 'assets/images/onboarding3.png',
+        title: 'Join a Green Community',
+        description: 'Connect with others who are passionate about saving our planet.',
+      ),
+    ];
   }
 
   @override
@@ -64,105 +38,44 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
     return Scaffold(
       body: Stack(
         children: [
-          SizedBox.expand(
-            child: FittedBox(
-              fit: BoxFit.cover,
-              child: SizedBox(
-                width: _videoController.value.size.width ?? 0,
-                height: _videoController.value.size.height ?? 0,
-                child: VideoPlayer(_videoController),
-              ),
-            ),
-          ),
-          // Dark overlay for better text contrast
-          Container(
-            color: Colors.black.withOpacity(0.5),
-          ),
-          // Top Skip Button
-          Positioned(
-            top: 40,
-            right: 20,
-            child: TextButton(
-              onPressed: () => _finishOnboarding(),
-              child: Text('Skip', style: GoogleFonts.roboto(color: Colors.white, fontSize: 16)),
-            ),
-          ),
-          // PageView for Onboarding Content
           PageView(
             controller: _pageController,
-            onPageChanged: _onPageChanged,
-            children: [
-              _buildPage(
-                title: 'Welcome to Carbon Chillex',
-                subtitle: 'Your journey to a greener lifestyle starts here.',
-                image: 'assets/images/carbon_chillex_logo.png',
-              ),
-              _buildPage(
-                title: 'Track Your Carbon Footprint',
-                subtitle: 'Monitor your daily activities and their impact on the environment.',
-                 image: 'assets/images/carbon_chillex_logo.png',
-              ),
-              _buildPage(
-                title: 'Live a More Sustainable Life',
-                subtitle: 'Get tips and challenges to reduce your carbon emissions.',
-                 image: 'assets/images/carbon_chillex_logo.png',
-              ),
-            ],
+            onPageChanged: (int page) {
+              setState(() {
+                _currentPage = page;
+              });
+            },
+            children: _buildPages(),
           ),
-          // Bottom Navigation
           Positioned(
-            bottom: 40,
-            left: 0,
-            right: 0,
+            bottom: 20,
+            left: 20,
+            right: 20,
             child: Column(
               children: [
-                SmoothPageIndicator(
-                  controller: _pageController,
-                  count: 3,
-                  effect: ExpandingDotsEffect(
-                    activeDotColor: Colors.white,
-                    dotColor: Colors.white.withOpacity(0.5),
-                    dotHeight: 10,
-                    dotWidth: 10,
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(_buildPages().length, (index) => _buildDot(index, context)),
                 ),
-                SizedBox(height: 60), // Adjusted spacing
-                isLastPage
-                    ? ElevatedButton(
-                        onPressed: () => _finishOnboarding(),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green.shade600, // Green color
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                        ),
-                        child: Text(
-                          'Get Started',
-                          style: GoogleFonts.roboto(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                      )
-                    : Container(
-                        width: 60,
-                        height: 60,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white, width: 2),
-                        ),
-                        child: IconButton(
-                          onPressed: () {
-                            _pageController.nextPage(
-                              duration: Duration(milliseconds: 500),
-                              curve: Curves.ease,
-                            );
-                          },
-                          icon: Icon(Icons.arrow_forward_ios, color: Colors.white),
-                        ),
+                SizedBox(height: 20),
+                if (_currentPage == _buildPages().length - 1)
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => const LoginScreen()),
+                      );
+                    },
+                    child: Text('Get Started'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green.shade600,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
                       ),
+                      padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                    ),
+                  ),
               ],
             ),
           ),
@@ -171,61 +84,39 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
     );
   }
 
-  Widget _buildPage({required String title, required String subtitle, String? image}) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        if (image != null)
-        Expanded(
-          child: Center(
-            child: Image.asset(
-              image,
-              height: 300, // Adjust height as needed
-              errorBuilder: (context, error, stackTrace) {
-                // This will catch the error and display a placeholder
-                return Icon(Icons.broken_image, size: 100, color: Colors.white.withOpacity(0.7));
-              },
-            ),
-          ),
-        ),
-        SlideTransition(
-          position: _textSlideAnimation,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
-            child: Column(
-              children: [
-                Text(
-                  title,
-                  style: GoogleFonts.roboto(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(height: 20),
-                Text(
-                  subtitle,
-                  style: GoogleFonts.roboto(
-                    fontSize: 18,
-                    color: Colors.white.withOpacity(0.85),
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(height: 180), // Space for the bottom navigation
-              ],
-            ),
-          ),
-        ),
-      ],
+  Widget _buildDot(int index, BuildContext context) {
+    return Container(
+      height: 10,
+      width: _currentPage == index ? 25 : 10,
+      margin: EdgeInsets.symmetric(horizontal: 5),
+      decoration: BoxDecoration(
+        color: _currentPage == index ? Colors.green.shade600 : Colors.grey,
+        borderRadius: BorderRadius.circular(5),
+      ),
     );
   }
 
-  void _finishOnboarding() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('seenOnboarding', true);
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (context) => AuthWrapper()),
+  Widget _buildPage({required String image, required String title, required String description}) {
+    return Padding(
+      padding: const EdgeInsets.all(40.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Image.asset(image, height: 300),
+          SizedBox(height: 40),
+          Text(
+            title,
+            textAlign: TextAlign.center,
+            style: GoogleFonts.roboto(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 20),
+          Text(
+            description,
+            textAlign: TextAlign.center,
+            style: GoogleFonts.roboto(fontSize: 16, color: Colors.grey.shade600),
+          ),
+        ],
+      ),
     );
   }
 }

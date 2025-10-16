@@ -1,8 +1,9 @@
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:Carbon_Chillax/services/api_service.dart';
 import 'package:provider/provider.dart';
 import 'package:form_field_validator/form_field_validator.dart';
+import 'package:Carbon_Chillax/services/api_service.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -70,13 +71,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   _buildTextField(controller: _confirmPasswordController, label: 'Confirm Password', icon: Icons.lock_outline, obscureText: true, validator: (val) => MatchValidator(errorText: 'passwords do not match').validateMatch(val!, _passwordController.text)),
                   SizedBox(height: 40),
                   ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
                       if (_formKey.currentState!.validate()) {
-                        context.read<ApiService>().register(
-                              _emailController.text.trim(),
-                              _passwordController.text.trim(),
-                            );
-                        Navigator.of(context).pop();
+                        try {
+                          await context.read<ApiService>().register(
+                                _emailController.text.trim(),
+                                _passwordController.text.trim(),
+                              );
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Registration successful! Please log in.'),
+                              backgroundColor: Colors.green,
+                            ),
+                          );
+                          Navigator.of(context).pop();
+                        } catch (e) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(e.toString()),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        }
                       }
                     },
                     style: ElevatedButton.styleFrom(
@@ -112,6 +128,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       controller: controller,
       obscureText: obscureText,
       validator: validator,
+      style: GoogleFonts.roboto(color: Colors.black87), // Set text color to black
       decoration: InputDecoration(
         labelText: label,
         labelStyle: GoogleFonts.roboto(color: Colors.grey.shade600),
@@ -122,6 +139,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           borderRadius: BorderRadius.circular(30),
           borderSide: BorderSide.none,
         ),
+        errorStyle: TextStyle(color: Colors.redAccent), // Optional: Custom error style
       ),
     );
   }

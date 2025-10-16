@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend
+    container_name: carbon-chillex-backend
+    ports:
+      - "4343:5001"
+    restart: unless-stopped
+    environment:
+      - PORT=5001
+      - DB_HOST=db
+      - DB_USER=root
+      - DB_PASSWORD=password
+      - DB_NAME=carbon_chillex
+    depends_on:
+      - db
+
+  db:
+    image: mysql:8.0
+    container_name: carbon-chillex-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: carbon_chillex
+    volumes:
+      - db-data:/var/lib/mysql
+
+volumes:
+  db-data:

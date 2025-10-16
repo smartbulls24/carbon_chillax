@@ -1,11 +1,12 @@
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:Carbon_Chillax/services/api_service.dart';
 import 'package:provider/provider.dart';
 import 'package:Carbon_Chillax/screens/auth/register_screen.dart';
 import 'package:Carbon_Chillax/screens/auth/forgot_password_screen.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:Carbon_Chillax/services/auth_service.dart';
+import 'package:Carbon_Chillax/services/api_service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -83,12 +84,22 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   SizedBox(height: 30),
                   ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
                       if (_formKey.currentState!.validate()) {
-                        context.read<ApiService>().login(
-                              _emailController.text.trim(),
-                              _passwordController.text.trim(),
-                            );
+                        try {
+                          await context.read<ApiService>().login(
+                                _emailController.text.trim(),
+                                _passwordController.text.trim(),
+                              );
+                          // Navigate to home screen on success
+                        } catch (e) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(e.toString()),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        }
                       }
                     },
                     style: ElevatedButton.styleFrom(
@@ -153,6 +164,7 @@ class _LoginScreenState extends State<LoginScreen> {
       controller: controller,
       obscureText: obscureText,
       validator: validator,
+      style: GoogleFonts.roboto(color: Colors.black87), // Set text color to black
       decoration: InputDecoration(
         labelText: label,
         labelStyle: GoogleFonts.roboto(color: Colors.grey.shade600),
@@ -163,6 +175,7 @@ class _LoginScreenState extends State<LoginScreen> {
           borderRadius: BorderRadius.circular(30),
           borderSide: BorderSide.none,
         ),
+        errorStyle: TextStyle(color: Colors.redAccent), // Optional: Custom error style
       ),
     );
   }

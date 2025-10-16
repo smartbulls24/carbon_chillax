@@ -3,11 +3,11 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
-  final String _baseUrl = 'http://10.0.2.2:5001/api'; // Replace with your API base URL
+  final String _baseUrl = 'http://31.97.226.110:4343'; // Base URL of your server
 
   Future<void> login(String email, String password) async {
     final response = await http.post(
-      Uri.parse('$_baseUrl/login'),
+      Uri.parse('$_baseUrl/api/auth/login'), // Corrected endpoint
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'email': email, 'password': password}),
     );
@@ -17,36 +17,24 @@ class ApiService {
       await _saveToken(data['token']);
     } else {
       // Handle error
+      print('Failed to login: ${response.body}');
     }
   }
 
   Future<void> register(String email, String password) async {
     final response = await http.post(
-      Uri.parse('$_baseUrl/register'),
+      Uri.parse('$_baseUrl/api/auth/register'), // Corrected endpoint
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'email': email, 'password': password}),
     );
 
-    if (response.statusCode == 201) {
-      final data = jsonDecode(response.body);
-      await _saveToken(data['token']);
-    } else {
-      // Handle error
+    if (response.statusCode != 200) {
+      print('Failed to register: ${response.body}');
     }
   }
 
   Future<void> _saveToken(String token) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('token', token);
-  }
-
-  Future<String?> getToken() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('token');
-  }
-
-  Future<void> logout() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('token');
   }
 }

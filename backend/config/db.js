@@ -1,8 +1,6 @@
 const mysql = require('mysql2');
-const dotenv = require('dotenv');
 
-dotenv.config();
-
+// When running in Docker, environment variables are passed directly from docker-compose
 const db = mysql.createConnection({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
@@ -15,7 +13,7 @@ db.connect(err => {
     console.error('Error connecting to the database:', err);
     return;
   }
-  console.log('Connected to the database');
+  console.log('Successfully connected to the database.');
 });
 
 module.exports = db;
