@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:Carbon_Chillax/services/auth_service.dart';
+import 'package:Carbon_Chillax/services/api_service.dart';
 import 'package:provider/provider.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 
 class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({super.key});
+
   @override
   _RegisterScreenState createState() => _RegisterScreenState();
 }
@@ -61,29 +63,29 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ],
                   ),
                   SizedBox(height: 40),
-                  _buildTextField(controller: _emailController, label: 'Email', icon: Icons.email_outlined, validator: EmailValidator(errorText: 'enter a valid email address')),
+                  _buildTextField(controller: _emailController, label: 'Email', icon: Icons.email_outlined, validator: EmailValidator(errorText: 'enter a valid email address').call),
                   SizedBox(height: 20),
-                  _buildTextField(controller: _passwordController, label: 'Password', icon: Icons.lock_outline, obscureText: true, validator: MinLengthValidator(6, errorText: 'password must be at least 6 digits long')),
+                  _buildTextField(controller: _passwordController, label: 'Password', icon: Icons.lock_outline, obscureText: true, validator: MinLengthValidator(6, errorText: 'password must be at least 6 digits long').call),
                   SizedBox(height: 20),
                   _buildTextField(controller: _confirmPasswordController, label: 'Confirm Password', icon: Icons.lock_outline, obscureText: true, validator: (val) => MatchValidator(errorText: 'passwords do not match').validateMatch(val!, _passwordController.text)),
                   SizedBox(height: 40),
                   ElevatedButton(
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
-                        context.read<AuthService>().signUp(
-                              email: _emailController.text.trim(),
-                              password: _passwordController.text.trim(),
+                        context.read<ApiService>().register(
+                              _emailController.text.trim(),
+                              _passwordController.text.trim(),
                             );
                         Navigator.of(context).pop();
                       }
                     },
-                    child: Text('Sign Up', style: GoogleFonts.roboto(fontSize: 18, fontWeight: FontWeight.bold)),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green.shade600,
                       foregroundColor: Colors.white,
                       minimumSize: Size(double.infinity, 50),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                     ),
+                    child: Text('Sign Up', style: GoogleFonts.roboto(fontSize: 18, fontWeight: FontWeight.bold)),
                   ),
                   SizedBox(height: 40),
                   Row(

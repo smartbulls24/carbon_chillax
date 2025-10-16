@@ -7,9 +7,16 @@
   packages = [
     pkgs.jdk21
     pkgs.unzip
+    pkgs.mysql80
+    pkgs.sudo
+    pkgs.dart
   ];
   # Sets environment variables in the workspace
   env = {};
+  services.mysql = {
+    enable = true;
+    package = pkgs.mysql80;
+  };
   idx = {
     # Search for the extensions you want on https://open-vsx.org/ and use "publisher.id"
     extensions = [

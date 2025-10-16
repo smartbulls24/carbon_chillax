@@ -6,6 +6,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:Carbon_Chillax/screens/auth/auth_wrapper.dart';
 
 class OnboardingScreen extends StatefulWidget {
+  const OnboardingScreen({super.key});
+
   @override
   _OnboardingScreenState createState() => _OnboardingScreenState();
 }
@@ -66,8 +68,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
             child: FittedBox(
               fit: BoxFit.cover,
               child: SizedBox(
-                width: _videoController.value.size?.width ?? 0,
-                height: _videoController.value.size?.height ?? 0,
+                width: _videoController.value.size.width ?? 0,
+                height: _videoController.value.size.height ?? 0,
                 child: VideoPlayer(_videoController),
               ),
             ),
@@ -128,6 +130,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
                 isLastPage
                     ? ElevatedButton(
                         onPressed: () => _finishOnboarding(),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green.shade600, // Green color
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                        ),
                         child: Text(
                           'Get Started',
                           style: GoogleFonts.roboto(
@@ -135,13 +144,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                           ),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green.shade600, // Green color
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                         ),
                       )
                     : Container(

@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:Carbon_Chillax/services/auth_service.dart';
+import 'package:Carbon_Chillax/services/api_service.dart';
 import 'package:provider/provider.dart';
 import 'package:Carbon_Chillax/screens/auth/register_screen.dart';
 import 'package:Carbon_Chillax/screens/auth/forgot_password_screen.dart';
 import 'package:form_field_validator/form_field_validator.dart';
+import 'package:Carbon_Chillax/services/auth_service.dart';
 
 class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
@@ -62,9 +65,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     ],
                   ),
                   SizedBox(height: 40),
-                  _buildTextField(controller: _emailController, label: 'Email', icon: Icons.email_outlined, validator: EmailValidator(errorText: 'enter a valid email address')),
+                  _buildTextField(controller: _emailController, label: 'Email', icon: Icons.email_outlined, validator: EmailValidator(errorText: 'enter a valid email address').call),
                   SizedBox(height: 20),
-                  _buildTextField(controller: _passwordController, label: 'Password', icon: Icons.lock_outline, obscureText: true, validator: RequiredValidator(errorText: 'password is required')),
+                  _buildTextField(controller: _passwordController, label: 'Password', icon: Icons.lock_outline, obscureText: true, validator: RequiredValidator(errorText: 'password is required').call),
                   SizedBox(height: 10),
                   Align(
                     alignment: Alignment.centerRight,
@@ -82,32 +85,45 @@ class _LoginScreenState extends State<LoginScreen> {
                   ElevatedButton(
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
-                        context.read<AuthService>().signIn(
-                              email: _emailController.text.trim(),
-                              password: _passwordController.text.trim(),
+                        context.read<ApiService>().login(
+                              _emailController.text.trim(),
+                              _passwordController.text.trim(),
                             );
                       }
                     },
-                    child: Text('Sign In', style: GoogleFonts.roboto(fontSize: 18, fontWeight: FontWeight.bold)),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green.shade600,
                       foregroundColor: Colors.white,
                       minimumSize: Size(double.infinity, 50),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                     ),
+                    child: Text('Sign In', style: GoogleFonts.roboto(fontSize: 18, fontWeight: FontWeight.bold)),
                   ),
                   SizedBox(height: 20),
-                  Text('OR', style: GoogleFonts.roboto(color: Colors.grey.shade600, fontWeight: FontWeight.bold)),
+                  Row(
+                    children: [
+                      Expanded(child: Divider(color: Colors.grey.shade400)),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                        child: Text('OR', style: GoogleFonts.roboto(color: Colors.grey.shade600)),
+                      ),
+                      Expanded(child: Divider(color: Colors.grey.shade400)),
+                    ],
+                  ),
                   SizedBox(height: 20),
                   ElevatedButton.icon(
-                    onPressed: () => context.read<AuthService>().signInWithGoogle(),
+                    onPressed: () {
+                      context.read<AuthService>().signInWithGoogle();
+                    },
                     icon: Image.asset('assets/images/google_logo.png', height: 24),
-                    label: Text('Sign in with Google', style: GoogleFonts.roboto(fontSize: 16, color: Colors.black87)),
+                    label: Text('Sign In with Google', style: GoogleFonts.roboto(fontSize: 16, color: Colors.black87)),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
                       minimumSize: Size(double.infinity, 50),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                      side: BorderSide(color: Colors.grey.shade300),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        side: BorderSide(color: Colors.grey.shade300),
+                      ),
                     ),
                   ),
                   SizedBox(height: 40),

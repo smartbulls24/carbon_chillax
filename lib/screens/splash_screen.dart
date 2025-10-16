@@ -5,6 +5,8 @@ import 'package:Carbon_Chillax/screens/onboarding/onboarding_screen.dart';
 import 'package:Carbon_Chillax/screens/auth/auth_wrapper.dart';
 
 class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
@@ -18,8 +20,8 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<void> _checkOnboardingStatus() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool seen =  false;
-    // bool seen = (prefs.getBool('seenOnboarding') ?? false);
+    // bool seen =  false;
+    bool seen = (prefs.getBool('seenOnboarding') ?? false);
 
     Timer(Duration(seconds: 3), () {
       if (seen) {

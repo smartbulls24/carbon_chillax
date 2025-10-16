@@ -3,6 +3,8 @@ import 'package:Carbon_Chillax/services/auth_service.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

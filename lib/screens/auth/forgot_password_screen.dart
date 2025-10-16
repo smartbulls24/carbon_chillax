@@ -5,6 +5,8 @@ import 'package:provider/provider.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
+  const ForgotPasswordScreen({super.key});
+
   @override
   _ForgotPasswordScreenState createState() => _ForgotPasswordScreenState();
 }
@@ -59,7 +61,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     ],
                   ),
                   SizedBox(height: 40),
-                  _buildTextField(controller: _emailController, label: 'Email', icon: Icons.email_outlined, validator: EmailValidator(errorText: 'enter a valid email address')),
+                  _buildTextField(controller: _emailController, label: 'Email', icon: Icons.email_outlined, validator: EmailValidator(errorText: 'enter a valid email address').call),
                   SizedBox(height: 40),
                   ElevatedButton(
                     onPressed: () {
@@ -73,13 +75,13 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         );
                       }
                     },
-                    child: Text('Send Reset Email', style: GoogleFonts.roboto(fontSize: 18, fontWeight: FontWeight.bold)),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green.shade600,
                       foregroundColor: Colors.white,
                       minimumSize: Size(double.infinity, 50),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                     ),
+                    child: Text('Send Reset Email', style: GoogleFonts.roboto(fontSize: 18, fontWeight: FontWeight.bold)),
                   ),
                   SizedBox(height: 40),
                   Row(
